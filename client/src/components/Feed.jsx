@@ -9,11 +9,13 @@ import http from '../utils/http';
 
 function Feed() {
     const { user } = useContext(AuthContext);
+    console.log(user, "USER FROM CONTEXT API");
     const [posts, setPosts] = useState([]);
     const [comment, setComment] = useState('');
 
     useEffect(() => {
         http.get('/post/all').then(res => {
+            console.log(res.data, "POSTS FROM API");
             setPosts(res.data);
         })
     }, []);
@@ -36,6 +38,7 @@ function Feed() {
     const handleComment = async (postId) => {
         try {
             const response = await http.put(`/post/comment/${postId}`, { text: comment });
+            console.log(response.data, "POST - USER");
             setPosts(posts.map(post =>
                 post._id === postId
                     ? { ...post, comments: response.data }
@@ -86,8 +89,8 @@ function Feed() {
                             </Typography>
                             {post.comments.map((comment, index) => (
                                 <Box key={index} display="flex" alignItems="center" sx={{ mt: 1 }}>
-                                    <Typography variant="body2" color="textSecondary">
-                                        <strong>{comment.user.username}:</strong> {comment.text}
+                                    <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                                        <strong>{comment.username}:</strong> {comment.text}
                                     </Typography>
                                     {comment.user._id === user._id && (
                                         <IconButton size='small' aria-label="delete" onClick={() => handleDelete(post._id, comment._id)} color='secondary'>
@@ -114,7 +117,7 @@ function Feed() {
                             onChange={(e) => setComment(e.target.value)}
                             sx={{ ml: 1, flexGrow: 1 }}
                         ></TextField>
-                        <IconButton aria-label="comment" onClick={() => handleComment(post._id)} color='primary'>
+                        <IconButton onClick={() => handleComment(post._id)} color='primary'>
                             <CommentIcon />
                         </IconButton>
                     </CardActions>

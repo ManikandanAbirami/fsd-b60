@@ -90,11 +90,14 @@ router.put("/comment/:id", auth, async (req, res) => {
       user: req.user._id,
       text,
       date: new Date().toLocaleDateString(),
+      username: req.user.name,
     };
 
     post.comments.push(newComment);
     await post.save();
     res.json(post.comments);
+    console.log(newComment, -"newComment!!!!");
+    console.log(post.comments, -"POST - COMMENTS!!!!");
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal Server Error");
